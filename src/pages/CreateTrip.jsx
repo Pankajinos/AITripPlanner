@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { ToastContainerCustom, ToastAlert } from "@/components/custom/toaster"
 import { chatSession } from "@/services/Gemni"
 import { FcGoogle } from "react-icons/fc";
+import { ImSpinner } from "react-icons/im";
 import {
     Dialog,
     DialogContent,
@@ -16,12 +17,15 @@ import {
 
 import { useGoogleLogin } from "@react-oauth/google"
 import axios from "axios"
+import { doc, setDoc } from "firebase/firestore"
+import { db } from "@/services/FireBaseConfig"
 
 
 
 export function CreateTrip() {
     const [formData, setForm] = useState([]);
     const [openDialog, setOpenDialog] = useState(false)
+    const [loading, setLoading] = useState(false);
     const inputChangeHandler = (name, value) => {
         setForm({
             ...formData,
@@ -32,7 +36,6 @@ export function CreateTrip() {
         onSuccess: (codeResp) => getUserProfile(codeResp),
         onError: (err) => console.log(err)
     })
-
     const getUserProfile = (tokenInfo) => {
         axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`, {
             headers: {
@@ -51,7 +54,6 @@ export function CreateTrip() {
     const generateTripHandler = async () => {
         const user = localStorage.getItem("user")
         if (!user) {
-            //google auth
             setOpenDialog(true)
             return;
         }
@@ -64,18 +66,36 @@ export function CreateTrip() {
             ToastAlert("Fill all the details")
             return;
         }
+        setLoading(true);
         const AI_PROMPT = `Genreate Travel plan for : ${formData.location} for 3 Days for ${formData.traveller} with a ${formData.buget},give me hotel option list,with HotelName,HotelAddress,Price,Hotel image url, geocordinates, rating, description and suggest itinerary with PlaceName, Place Details, Place image url,Geo coordinates, ticket pricing.Time to travel each of these loaction in 3 days with each day plan with best time to visit all these places in JSON format`
         const result = await chatSession.sendMessage(AI_PROMPT);
-        // console.log(output)
         console.log(result?.response?.text())
+        saveTrip(result?.response?.text());
+        setLoading(false);
     }
-    // useEffect(() => {
-    //     const timmer=setTimeout(() => {
+    const saveTrip = async (tripData) => {
+        try {
+            console.log("Firestore instance:", db);
 
-    //         console.log(formData);
-    //     }, 500);
-    //     return ()=>clearTimeout(timmer)
-    // },[formData])
+            setLoading(true);
+
+            const user = JSON.parse(localStorage.getItem("user"));
+            const docId = Date.now().toString();
+
+            await setDoc(doc(db, "All trips", docId), {
+                userSelection: formData,
+                tripData: JSON.parse(tripData),
+                userEmail: user?.email,
+                docId: docId,
+            });
+
+            console.log("Trip saved successfully:", user);
+        } catch (error) {
+            console.error("Error saving trip:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return <>
         <div className="flex flex-col items-center gap-4 mt-10">
@@ -113,7 +133,12 @@ export function CreateTrip() {
                         </div>)
                     })}
                     <div className=" flex justify-end w-[70vw]">
-                        <Button className='mt-10' onClick={generateTripHandler}>Generate Trip</Button>
+                        <Button
+                            className='mt-10'
+                            disabled={loading}
+                            onClick={generateTripHandler}
+                        >{loading ? <ImSpinner className="animate-spin" /> : 'Generate Trip'}
+                        </Button>
                     </div>
                 </div>
                 <Dialog open={openDialog}>
