@@ -19,6 +19,7 @@ import { useGoogleLogin } from "@react-oauth/google"
 import axios from "axios"
 import { doc, setDoc } from "firebase/firestore"
 import { db } from "@/services/FireBaseConfig"
+import { useNavigate } from "react-router-dom"
 
 
 
@@ -26,6 +27,7 @@ export function CreateTrip() {
     const [formData, setForm] = useState([]);
     const [openDialog, setOpenDialog] = useState(false)
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     const inputChangeHandler = (name, value) => {
         setForm({
             ...formData,
@@ -67,7 +69,7 @@ export function CreateTrip() {
             return;
         }
         setLoading(true);
-        const AI_PROMPT = `Genreate Travel plan for : ${formData.location} for 3 Days for ${formData.traveller} with a ${formData.buget},give me hotel option list,with HotelName,HotelAddress,Price,Hotel image url, geocordinates, rating, description and suggest itinerary with PlaceName, Place Details, Place image url,Geo coordinates, ticket pricing.Time to travel each of these loaction in 3 days with each day plan with best time to visit all these places in JSON format`
+        const AI_PROMPT = `Generate Travel Plan for Location: ${formData.location}, for 3 Days for ${formData.traveller}  with a ${formData.buget} budget, Give me a Hotels options list with HotelName, Hotel address, Price (only range no other text), hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, Time t travel each of the location for 3 days with each day plan with best time to visit in JSON format. Itinerary must be in array format.`
         const result = await chatSession.sendMessage(AI_PROMPT);
         console.log(result?.response?.text())
         saveTrip(result?.response?.text());
@@ -75,21 +77,16 @@ export function CreateTrip() {
     }
     const saveTrip = async (tripData) => {
         try {
-            console.log("Firestore instance:", db);
-
             setLoading(true);
-
             const user = JSON.parse(localStorage.getItem("user"));
             const docId = Date.now().toString();
-
-            await setDoc(doc(db, "All trips", docId), {
+            await setDoc(doc(db, "AiTrips", docId), {
                 userSelection: formData,
                 tripData: JSON.parse(tripData),
                 userEmail: user?.email,
                 docId: docId,
             });
-
-            console.log("Trip saved successfully:", user);
+            navigate(`/view-trip/${docId}`)
         } catch (error) {
             console.error("Error saving trip:", error);
         } finally {
@@ -101,7 +98,7 @@ export function CreateTrip() {
         <div className="flex flex-col items-center gap-4 mt-10">
             <ToastContainerCustom />
             <div className="w-[70vw]">
-                <h1 className="font-bold text-3xl">Tell us your travel preference 🚞</h1>
+                <h1 className="text-xl font-bold md:text-3xl">Tell us your travel preference 🚞</h1>
                 <p>Just provide some basic information and our trip will automatically genrated based on your preference</p>
             </div>
             <div className="w-[70vw]">
@@ -114,7 +111,7 @@ export function CreateTrip() {
             </div>
             <div className="w-[70vw]">
                 <h1 className="my-3 text-xl font-medium">What's your Buget?</h1>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {Buget.map((item, index) => {
                         return (<div key={index} onClick={() => { inputChangeHandler('buget', item.title) }} className={`p-10 border rounded-lg hover:shadow-lg hover:bg-slate-100 ${formData.buget == item.title && `border-black`}`}>
                             <h2 className="text-4xl">{item.icon}</h2>
@@ -124,7 +121,7 @@ export function CreateTrip() {
                     })}
                 </div>
                 <h1 className="my-3 text-xl font-medium">Who do you plan on travelling with on your next adv</h1>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {SelectTravelList.map((item, index) => {
                         return (<div key={index} onClick={() => { inputChangeHandler('traveller', item.title) }} className={`p-10 border rounded-lg hover:shadow-lg hover:bg-gray-100 ${formData.traveller == item.title && `border-black`}`}>
                             <h2 className="text-4xl">{item.icon}</h2>
@@ -141,7 +138,7 @@ export function CreateTrip() {
                         </Button>
                     </div>
                 </div>
-                <Dialog open={openDialog}>
+                <Dialog open={openDialog} onOpenChange={setOpenDialog} >
                     <DialogContent className="p-6 bg-white rounded-2xl shadow-lg max-w-sm">
                         <DialogHeader className="flex flex-col items-center">
                             <DialogTitle>

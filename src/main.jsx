@@ -6,6 +6,7 @@ import { CreateTrip } from './pages/CreateTrip'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Header from './components/custom/Header'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import ViewTrip from './pages/view-trip/[tripId]/viewTrip'
 const router = createBrowserRouter([
   {
     path: '/',
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: '/create-trip',
     element: <CreateTrip />
+  },
+  {
+    path: '/view-trip/:tripId',
+    element: <ViewTrip/>
   }
 ])
 createRoot(document.getElementById('root')).render(
