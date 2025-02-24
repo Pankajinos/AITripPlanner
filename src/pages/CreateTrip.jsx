@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input"
-import { Buget, SelectTravelList } from "@/constants/options"
+import { Budget, SelectTravelList } from "@/constants/options"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { ToastContainerCustom, ToastAlert } from "@/components/custom/toaster"
@@ -64,12 +64,129 @@ export function CreateTrip() {
             ToastAlert("No of people must be less than 8");
             return;
         }
-        if (!formData.noOfPeople || !formData.location || !formData.traveller || !formData.buget) {
+        if (!formData.noOfPeople || !formData.location || !formData.traveller || !formData.budget) {
             ToastAlert("Fill all the details")
             return;
         }
         setLoading(true);
-        const AI_PROMPT = `Generate Travel Plan for Location: ${formData.location}, for 3 Days for ${formData.traveller}  with a ${formData.buget} budget, Give me a Hotels options list with HotelName, Hotel address, Price (only range no other text), hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, Time t travel each of the location for 3 days with each day plan with best time to visit in JSON format. Itinerary must be in array format.`
+        const AI_PROMPT = `const trip = {
+  tripName: "Luxry Trip To Bikaner",
+  budget: "Luxry",
+  travellers: "Family",
+  duration: "3 days",
+  noOfPeople:"4",
+  location: "Bikaner",
+  hotelOptions: [
+    {
+      hotelName: "InderLok Place",
+      hotelAddress: "Near Kot Gate 11-A, Rani Bazar,Bikaner",
+      price: "₹4000-₹6000",
+      rating: "4",//out of 5
+      description: "description of hotel",
+    },
+    {
+      hotelName: "Chadan Place",
+      hotelAddress: "Near Kot Gate 11-A, Rani Bazar,Bikaner",
+      price: "₹4000-₹6000",
+      rating: "4",//out of 5
+      description: "description of hotel",
+    },
+    {
+      hotelName: "Lalgarh Place",
+      hotelAddress: "Near Kot Gate 11-A, Rani Bazar,Bikaner",
+      price: "₹4000-₹6000",
+      rating: "4",//out of 5
+      description: "description of hotel",
+    },
+  ],
+  itinerary: [
+    {
+      day: "1",
+      themeOfDay: "Cultural visit",
+      activities: [
+        {
+          placeName: "Junagargarh Fort",
+          timeToTravel: "Morning",
+          placeAddress: "Junagargarh Fort C-113, Koila Gali,Bikaner",
+          ticketPrice: "₹500",
+          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
+        },
+        {
+          placeName: "Lalgarh Fort",
+          timeToTravel: "Afternoon",
+          placeAddress: "Lalgarh Fort C-113, Koila Gali,Bikaner",
+          ticketPrice:"₹500",
+          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
+        },
+        {
+          placeName: "Local Market",
+          timeToTravel: "Evening",
+          placeAddress: "Raja Bazar",
+          ticketPrice:"Shopping Expenses",
+          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
+        },
+      ]
+    },
+    {
+      day: "2",
+      themeOfDay: "Spiritual visit",
+      activities: [
+        {
+          placeName: "Deshnok Temple",
+          timeToTravel: "Morning",
+          placeAddress: "Karni Mata Mandir,Deshnok,Bikaner",
+          ticketPrice:"Free",
+          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
+        },
+        {
+          placeName: "Jain temple",
+          timeToTravel: "Afternoon",
+          placeAddress: "Lalgarh Fort C-113, Koila Gali,Bikaner",
+          ticketPrice:"₹500",
+          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
+        },
+        {
+          placeName: "Local Market",
+          timeToTravel: "Evening",
+          placeAddress: "Raja Bazar",
+          ticketPrice:"Shopping Expenses",
+          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
+        },
+      ]
+    },
+    {
+      day: "3",
+      themeOfDay: "Any theme as per activites",
+      activities: [
+        {
+          placeName: "Deshnok Temple",
+          timeToTravel: "Morning",
+          placeAddress: "Karni Mata Mandir,Deshnok,Bikaner",
+          ticketPrice:"Free",
+          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
+        },
+        {
+          placeName: "Jain temple",
+          timeToTravel: "Afternoon",
+          placeAddress: "Lalgarh Fort C-113, Koila Gali,Bikaner",
+          ticketPrice:"₹500",
+          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
+        },
+        {
+          placeName: "Local Market",
+          timeToTravel: "Evening",
+          placeAddress: "Raja Bazar",
+          ticketPrice:"Shopping expenses",
+          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
+        },
+      ]
+    },
+
+  ],
+}
+
+Stick to this schema and create a full trip of 3 Days for ${formData.location}, budget : ${formData.budget} , travellers: ${formData.traveller},No of people ${formData.noOfPeople}, Give me a Hotels options list with HotelName, Hotel address, Price (only range no other text), rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, in JSON format.
+Stick to this schema only.`
         const result = await chatSession.sendMessage(AI_PROMPT);
         console.log(result?.response?.text())
         saveTrip(result?.response?.text());
@@ -110,10 +227,10 @@ export function CreateTrip() {
                 <Input type="number" placeholder={"Ex.3"} onChange={(e) => { inputChangeHandler('noOfPeople', e.target.value) }} />
             </div>
             <div className="w-[70vw]">
-                <h1 className="my-3 text-xl font-medium">What's your Buget?</h1>
+                <h1 className="my-3 text-xl font-medium">What's your Budget?</h1>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {Buget.map((item, index) => {
-                        return (<div key={index} onClick={() => { inputChangeHandler('buget', item.title) }} className={`p-10 border rounded-lg hover:shadow-lg hover:bg-slate-100 ${formData.buget == item.title && `border-black`}`}>
+                    {Budget.map((item, index) => {
+                        return (<div key={index} onClick={() => { inputChangeHandler('budget', item.title) }} className={`p-10 border rounded-lg hover:shadow-lg hover:bg-slate-100 ${formData.budget == item.title && `border-black`}`}>
                             <h2 className="text-4xl">{item.icon}</h2>
                             <h2 className="font-bold">{item.title}</h2>
                             <h2>{item.desc}</h2>

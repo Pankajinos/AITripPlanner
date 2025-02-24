@@ -29,7 +29,7 @@ export const SelectTravelList = [
   },
 ];
 
-export const Buget = [
+export const Budget = [
   { 
     id: 1,
     title: "Cheap",

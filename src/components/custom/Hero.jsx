@@ -1,8 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button } from '../ui/button'
 import { Link } from 'react-router-dom'
+import { GetPlaceDetails } from '@/services/GlobalApi'
+const PHOTO_URL_BASE = `https://maps.googleapis.com/maps/api/place/details/json?place_id={PLACE_ID}&fields=photos&key=${import.meta.env.VITE_GOOGLE_MAP_API}`
 
 function Hero() {
+  // useEffect(() => {
+  //   getPlacePhoto();
+  // }, [])
+  
+  // const fetchPlaceRef = async (url) => {
+  //   const response = await fetch(url);
+  //   const data = await response.json();
+  // }
+
+  // const getPlaceRefernce = async () => {
+  //         // console.log(trip?.userSelection?.location);
+  //         const data = {
+  //             textQuery: "Bikaner",
+  //             languageCode: 'en'
+  //         };
+  //         await GetPlaceDetails(data).then((resp) => {
+  //             console.log(resp.data);
+  //             const PHOTO_URL = PHOTO_URL_BASE.replace('{PLACE_ID}',resp.data.places[0].id);
+  //           return fetchPlaceRef(PHOTO_URL);
+  //         });
+    // }
   return (
       <div className='flex flex-col-reverse md:flex-row justify-between items-center'>
           <div className='flex flex-col items-center'>
