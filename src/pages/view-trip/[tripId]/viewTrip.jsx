@@ -9,7 +9,7 @@ import Hotels from '@/components/custom/Hotels';
 import PlacesToVisit from '@/components/custom/PlacesToVisit';
 
 function ViewTrip() {
-    const { tripId } = useParams();//to fetch tripid from url
+    const {tripId} = useParams();//to fetch tripid from url
     const [trip, setTrip] = useState({});
     useEffect(() => {
         getTrip();
@@ -27,6 +27,8 @@ function ViewTrip() {
             console.log("No such document!");
         }
     }
+
+    
     return (
         <div className='md:p-8 flex flex-col m-4 md:m-[10vh]  md:mt-2'>
             <TripHeader trip={trip} />

@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input"
-import { Budget, SelectTravelList } from "@/constants/options"
+import { Budget, SelectTravelList, AI_PROMPT } from "@/constants/options"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { ToastContainerCustom, ToastAlert } from "@/components/custom/toaster"
@@ -20,6 +20,7 @@ import axios from "axios"
 import { doc, setDoc } from "firebase/firestore"
 import { db } from "@/services/FireBaseConfig"
 import { useNavigate } from "react-router-dom"
+import GooglePlacesAutocomplete from "react-google-places-autocomplete"
 
 
 
@@ -60,134 +61,24 @@ export function CreateTrip() {
       return;
     }
 
-    if (formData.noOfPeople > 8) {
-      ToastAlert("No of people must be less than 8");
+    if (formData.noOfDays > 8) {
+      ToastAlert("No of Days must be less than 4");
       return;
     }
-    if (!formData.noOfPeople || !formData.location || !formData.traveller || !formData.budget) {
+    if (!formData.noOfDays || !formData.location || !formData.traveller || !formData.budget) {
       ToastAlert("Fill all the details")
       return;
     }
     setLoading(true);
-    const AI_PROMPT = `const trip = {
-  tripName: "Luxry Trip To Bikaner",
-  budget: "Luxry",
-  travellers: "Family",
-  duration: "3 days",
-  noOfPeople:"4",
-  location: "Bikaner",
-  hotelOptions: [
-    {
-      hotelName: "InderLok Place",
-      hotelAddress: "Near Kot Gate 11-A, Rani Bazar,Bikaner",
-      price: "₹4000-₹6000",
-      rating: "4",//out of 5
-      description: "description of hotel",
-    },
-    {
-      hotelName: "Chadan Place",
-      hotelAddress: "Near Kot Gate 11-A, Rani Bazar,Bikaner",
-      price: "₹4000-₹6000",
-      rating: "4",//out of 5
-      description: "description of hotel",
-    },
-    {
-      hotelName: "Lalgarh Place",
-      hotelAddress: "Near Kot Gate 11-A, Rani Bazar,Bikaner",
-      price: "₹4000-₹6000",
-      rating: "4",//out of 5
-      description: "description of hotel",
-    },
-  ],
-  itinerary: [
-    {
-      day: "1",
-      themeOfDay: "Cultural visit",
-      activities: [
-        {
-          placeName: "Junagargarh Fort",
-          timeToTravel: "Morning",
-          placeAddress: "Junagargarh Fort C-113, Koila Gali,Bikaner",
-          ticketPrice: "₹500",
-          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
-        },
-        {
-          placeName: "Lalgarh Fort",
-          timeToTravel: "Afternoon",
-          placeAddress: "Lalgarh Fort C-113, Koila Gali,Bikaner",
-          ticketPrice:"₹500",
-          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
-        },
-        {
-          placeName: "Lalgarh Fort",
-          timeToTravel: "Evening",
-          placeAddress: "Lalgarh Fort C-113, Koila Gali,Bikaner",
-          ticketPrice:"₹500",
-          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
-        },
-      ]
-    },
-    {
-      day: "2",
-      themeOfDay: "Spiritual visit",
-      activities: [
-        {
-          placeName: "Deshnok Temple",
-          timeToTravel: "Morning",
-          placeAddress: "Karni Mata Mandir,Deshnok,Bikaner",
-          ticketPrice:"Free",
-          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
-        },
-        {
-          placeName: "Deshnok Temple",
-          timeToTravel: "Afternoon",
-          placeAddress: "Karni Mata Mandir,Deshnok,Bikaner",
-          ticketPrice:"Free",
-          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
-        },
-        {
-          placeName: "Deshnok Temple",
-          timeToTravel: "Evening",
-          placeAddress: "Karni Mata Mandir,Deshnok,Bikaner",
-          ticketPrice:"Free",
-          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
-        },
-      ]
-    },
-    {
-      day: "3",
-      themeOfDay: "Any theme as per activites",
-      activities: [
-        {
-          placeName: "Deshnok Temple",
-          timeToTravel: "Morning",
-          placeAddress: "Karni Mata Mandir,Deshnok,Bikaner",
-          ticketPrice:"Free",
-          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
-        },
-        {
-          placeName: "Deshnok Temple",
-          timeToTravel: "Afternoon",
-          placeAddress: "Karni Mata Mandir,Deshnok,Bikaner",
-          ticketPrice:"Free",
-          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
-        },
-        {
-          placeName: "Deshnok Temple",
-          timeToTravel: "Evening",
-          placeAddress: "Karni Mata Mandir,Deshnok,Bikaner",
-          ticketPrice:"Free",
-          placeDetails:"Built by Bikoji 500years after mirgration from Jodhpur"
-        },
-      ]
-    },
+    const AT_PROMPT_FINAL =
+      AI_PROMPT
+        .replace('{noOfDays}', formData.noOfDays)
+        .replace('{location}', formData.location)
+        .replace('{budget}', formData.budget)
+        .replace('{traveller}', formData.traveller)
 
-  ],
-}
-
-Stick to this schema and create a full trip of 3 Days for ${formData.location}, budget : ${formData.budget} , travellers: ${formData.traveller},No of people ${formData.noOfPeople}, Give me a Hotels options list with HotelName, Hotel address, Price (only range no other text), rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, ticket Pricing, in JSON format.
-Stick to this schema only and mention only famous places whose photos are available on google photos api only and reduce number of days as per places`
-    const result = await chatSession.sendMessage(AI_PROMPT);
+    const result = await chatSession.sendMessage(AT_PROMPT_FINAL);
+    console.log(AT_PROMPT_FINAL);
     console.log(result?.response?.text())
     saveTrip(result?.response?.text());
     setLoading(false);
@@ -210,9 +101,8 @@ Stick to this schema only and mention only famous places whose photos are availa
       setLoading(false);
     }
   };
-
   return <>
-    <div className="flex flex-col items-center gap-4 mt-10">
+    <div className="flex flex-col items-center gap-4 bg-[url('/bg2.jpg')] bg-cover bg-no-repeat bg-blend-overlay bg-black/80">
       <ToastContainerCustom />
       <div className="w-[70vw]">
         <h1 className="text-xl font-bold md:text-3xl">Tell us your travel preference 🚞</h1>
@@ -220,17 +110,59 @@ Stick to this schema only and mention only famous places whose photos are availa
       </div>
       <div className="w-[70vw]">
         <h1 className="font-sans">Choose Destination for your Trip</h1>
-        <Input placeholder={"Enter location Trip location"} onChange={(e) => { inputChangeHandler('location', e.target.value) }} />
+        <GooglePlacesAutocomplete
+  apiKey={import.meta.env.VITE_GOOGLE_MAP_API}
+  selectProps={{
+    styles: {
+      control: (base) => ({
+        ...base,
+        backgroundColor: "rgb(40, 43, 40)", // Dark background
+        color: "white",
+        borderRadius: "8px",
+        border: "1px solid gray",
+      }),
+      input: (base) => ({
+        ...base,
+        color: "white",
+      }),
+      singleValue: (base) => ({
+        ...base,
+        color: "white",
+      }),
+      menu: (base) => ({
+        ...base,
+        backgroundColor: "rgb(30, 30, 30)", // Dark dropdown
+        borderRadius: "8px",
+        padding: "5px",
+      }),
+      option: (base, { isFocused, isSelected }) => ({
+        ...base,
+        backgroundColor: isSelected
+          ? "rgb(70, 70, 70)" // Darker for selected
+          : isFocused
+          ? "rgb(90, 90, 90)" // Lighter for hover
+          : "rgb(30, 30, 30)", // Default dark
+        color: "white",
+        padding: "10px",
+        borderRadius: "6px",
+        cursor: "pointer",
+      }),
+    },
+    onChange: (e) => inputChangeHandler("location", e.label),
+  }}
+/>
+
+
       </div>
       <div className="w-[70vw]">
-        <h1 className="font-sans">Enter number of people</h1>
-        <Input type="number" placeholder={"Ex.3"} onChange={(e) => { inputChangeHandler('noOfPeople', e.target.value) }} />
+        <h1 className="font-sans border-black">Enter number of Days</h1>
+        <Input type="number" placeholder={"Ex.3"} onChange={(e) => { inputChangeHandler('noOfDays', e.target.value) }} />
       </div>
       <div className="w-[70vw]">
         <h1 className="my-3 text-xl font-medium">What's your Budget?</h1>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Budget.map((item, index) => {
-            return (<div key={index} onClick={() => { inputChangeHandler('budget', item.title) }} className={`p-10 border rounded-lg hover:shadow-lg hover:bg-slate-100 ${formData.budget == item.title && `border-black`}`}>
+            return (<div key={index} onClick={() => { inputChangeHandler('budget', item.title) }} className={`p-10 border rounded-lg bg-gray-900 border-black ${formData.budget == item.title && `border-yellow-500 border-[3px]`}`}>
               <h2 className="text-4xl">{item.icon}</h2>
               <h2 className="font-bold">{item.title}</h2>
               <h2>{item.desc}</h2>
@@ -240,7 +172,7 @@ Stick to this schema only and mention only famous places whose photos are availa
         <h1 className="my-3 text-xl font-medium">Who do you plan on travelling with on your next adv</h1>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {SelectTravelList.map((item, index) => {
-            return (<div key={index} onClick={() => { inputChangeHandler('traveller', item.title) }} className={`p-10 border rounded-lg hover:shadow-lg hover:bg-gray-100 ${formData.traveller == item.title && `border-black`}`}>
+            return (<div key={index} onClick={() => { inputChangeHandler('traveller', item.title) }} className={`p-10 border rounded-lg  bg-gray-900 border-black ${formData.traveller == item.title && `border-yellow-500 border-[3px]`}`}>
               <h2 className="text-4xl">{item.icon}</h2>
               <h2 className="font-bold">{item.title}</h2>
               <h2>{item.desc}</h2>
@@ -256,7 +188,7 @@ Stick to this schema only and mention only famous places whose photos are availa
           </div>
         </div>
         <Dialog open={openDialog} onOpenChange={setOpenDialog} >
-          <DialogContent className="p-6 bg-white rounded-2xl shadow-lg max-w-sm">
+          <DialogContent className="p-6 bg-[rgb(40,43,40)] rounded-2xl shadow-lg max-w-sm">
             <DialogHeader className="flex flex-col items-center">
               <DialogTitle>
                 <img src="/logo.svg" alt="logo" className="mx-auto" />

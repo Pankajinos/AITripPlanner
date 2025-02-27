@@ -1,17 +1,14 @@
-import { GetPlaceDetails } from '@/services/GlobalApi';
+import { GetPlaceDetails,PHOTO_URL_BASE } from '@/services/GlobalApi';
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-const PHOTO_URL_BASE=`https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=600&&maxWidthPx=1000&&key=${import.meta.env.VITE_GOOGLE_MAP_API}`
 function HotelCard({ hotel }) {
   const [hotelUrl, setHotelUrl] = useState('/illustration.svg');
       useEffect(() => {
           hotel && getHotelPhoto();
       }, [hotel])
-   
       const getHotelPhoto = async () => {
           const data = {
                 textQuery: hotel?.hotelName,
-            //   textQuery:"Jaipur",
               languageCode: 'en'
           };
           const result = await GetPlaceDetails(data).then((resp) => {
@@ -19,7 +16,7 @@ function HotelCard({ hotel }) {
               const PHOTO_URL = PHOTO_URL_BASE.replace('{NAME}',resp.data.places[0].photos[5].name);
               console.log(`For ${hotel.hotelName} url is :`);
               console.log(PHOTO_URL);
-              setHotelUrl(PHOTO_URL);
+              if(PHOTO_URL) setHotelUrl(PHOTO_URL);
           });
       }
   return (

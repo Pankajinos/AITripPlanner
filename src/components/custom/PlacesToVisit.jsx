@@ -9,8 +9,8 @@ function PlacesToVisit({ trip }) {
                 return <div className='p-1 md:p-6' key={index}>
                     <h4 className='text-xl font-bold'>{"Day " + (plan.day)}</h4>
                     <div className='flex flex-col md:flex-row'>
-                        {plan.activities.map((place, index) => {
-                            return (<PlaceCard key={index} place={place} />)
+                        {plan.activities.map((place, idx) => {
+                            return (<PlaceCard key={idx} place={place} />)
                         })}
                     </div>
                 </div>
