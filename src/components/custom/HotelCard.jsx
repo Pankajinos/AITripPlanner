@@ -21,14 +21,14 @@ function HotelCard({ hotel }) {
       }
   return (
     <Link to={`https://www.google.com/maps/search/?api=1&query=${hotel.hotelName} ${hotel.hotelAddress}`} target='_blank'>
-    <div className='flex flex-col h-[75vh] flex-grow '>
+    <div className='flex flex-col h-[80vh] flex-grow bg-[rgb(59,63,60)] p-2 rounded-lg'>
     <img src={hotelUrl} className='rounded-xl object-cover h-[60vh]'  alt="" />
-    <h1 className='font-bold text-xl'>{hotel?.hotelName}</h1>
+    <h1 className='font-bold text-xl '>{hotel?.hotelName}</h1>
         <p className='text-sm'>{hotel?.description}</p>
         <div className="flex-grow"></div>
     <div className='flex flex-row justify-between'>
-        <p className='bg-neutral-100 rounded-lg p-1 text-sm'>💰 {hotel?.price}</p>
-        <p className='bg-neutral-100 rounded-lg p-1 text-sm'>{hotel?.rating} ⭐ </p>
+        <p className='bg-black rounded-lg p-1 text-sm'>💰 {hotel?.price}</p>
+        <p className='bg-black rounded-lg p-1 text-sm'>{hotel?.rating} ⭐ </p>
     </div>
 </div>
 </Link>

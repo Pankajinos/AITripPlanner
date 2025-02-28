@@ -40,18 +40,21 @@ function Header() {
   }
     return (
       <div className='p-2 shadow-sm flex justify-between align-top'>
-        <img src="/logo.svg" className='ml-6' alt="logo" />
+        <img src="/logo.svg" className='ml-4' alt="logo" />
         {user ?
-          <div className='flex flex-row justify-center gap-2'>
-            <a href="./my-trips">
+          <div className='flex flex-row justify-center gap-2 mr-4'>
+            <a href="/my-trips">
               <Button>My Trips</Button>
             </a>
-            <img src={user["picture"]} onClick={() => {
+            <a href="/create-trip">
+              <Button>+ Create Trip</Button>
+            </a>
+            <img src={user.picture} onClick={() => {
               if (openPopUp) {
                 setPopUp(false)
               }
               else setPopUp(true)
-            }} className='rounded-full h-8 cursor-pointer' alt="" />
+            }} className='rounded-full h-8 cursor-pointer mr-4' alt="" />
             {openPopUp &&
               <ProfileCard user={user} setPopUp={setPopUp} />
               }
