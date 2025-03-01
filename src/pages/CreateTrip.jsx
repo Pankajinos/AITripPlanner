@@ -111,46 +111,46 @@ export function CreateTrip() {
       <div className="w-[70vw]">
         <h1 className="font-sans">Choose Destination for your Trip</h1>
         <GooglePlacesAutocomplete
-  apiKey={import.meta.env.VITE_GOOGLE_MAP_API}
-  selectProps={{
-    styles: {
-      control: (base) => ({
-        ...base,
-        backgroundColor: "rgb(40, 43, 40,0.2)", // Dark background
-        color: "white",
-        borderRadius: "8px",
-        border: "1px solid white",
-      }),
-      input: (base) => ({
-        ...base,
-        color: "white",
-      }),
-      singleValue: (base) => ({
-        ...base,
-        color: "white",
-      }),
-      menu: (base) => ({
-        ...base,
-        backgroundColor: "rgb(30, 30, 30)", // Dark dropdown
-        borderRadius: "8px",
-        padding: "5px",
-      }),
-      option: (base, { isFocused, isSelected }) => ({
-        ...base,
-        backgroundColor: isSelected
-          ? "rgb(70, 70, 70)" // Darker for selected
-          : isFocused
-          ? "rgb(90, 90, 90)" // Lighter for hover
-          : "rgb(30, 30, 30)", // Default dark
-        color: "white",
-        padding: "10px",
-        borderRadius: "6px",
-        cursor: "pointer",
-      }),
-    },
-    onChange: (e) => inputChangeHandler("location", e.label),
-  }}
-/>
+          apiKey={import.meta.env.VITE_GOOGLE_MAP_API}
+          selectProps={{
+            styles: {
+              control: (base) => ({
+                ...base,
+                backgroundColor: "rgb(40, 43, 40,0.2)", // Dark background
+                color: "white",
+                borderRadius: "8px",
+                border: "1px solid white",
+              }),
+              input: (base) => ({
+                ...base,
+                color: "white",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: "white",
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: "rgb(30, 30, 30)", // Dark dropdown
+                borderRadius: "8px",
+                padding: "5px",
+              }),
+              option: (base, { isFocused, isSelected }) => ({
+                ...base,
+                backgroundColor: isSelected
+                  ? "rgb(70, 70, 70)" // Darker for selected
+                  : isFocused
+                    ? "rgb(90, 90, 90)" // Lighter for hover
+                    : "rgb(30, 30, 30)", // Default dark
+                color: "white",
+                padding: "10px",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }),
+            },
+            onChange: (e) => inputChangeHandler("location", e.label),
+          }}
+        />
 
 
       </div>
@@ -191,10 +191,12 @@ export function CreateTrip() {
           <DialogContent className="p-6 bg-[rgb(40,43,40)] rounded-2xl shadow-lg max-w-sm">
             <DialogHeader className="flex flex-col items-center">
               <DialogTitle>
-                <img src="/logo.svg" alt="logo" className="mx-auto" />
+                <a href="/">
+                  <img src="/logo.svg" alt="logo" className="mx-auto" />
+                </a>
               </DialogTitle>
               <DialogDescription className="w-full text-center">
-                <h2 className="font-semibold text-gray-700 text-base my-4">Sign in with Google</h2>
+                <h2 className="font-semibold text-white text-base my-4">Sign in with Google</h2>
                 <Button
                   onClick={login}
                   className="w-full py-3 flex gap-3 items-center justify-center border border-gray-300 rounded-lg hover:bg-slate-800 transition"
