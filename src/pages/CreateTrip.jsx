@@ -116,10 +116,10 @@ export function CreateTrip() {
     styles: {
       control: (base) => ({
         ...base,
-        backgroundColor: "rgb(40, 43, 40)", // Dark background
+        backgroundColor: "rgb(40, 43, 40,0.2)", // Dark background
         color: "white",
         borderRadius: "8px",
-        border: "1px solid gray",
+        border: "1px solid white",
       }),
       input: (base) => ({
         ...base,
@@ -155,7 +155,7 @@ export function CreateTrip() {
 
       </div>
       <div className="w-[70vw]">
-        <h1 className="font-sans border-black">Enter number of Days</h1>
+        <h1 className="font-sans border-white">Enter number of Days</h1>
         <Input type="number" placeholder={"Ex.3"} onChange={(e) => { inputChangeHandler('noOfDays', e.target.value) }} />
       </div>
       <div className="w-[70vw]">

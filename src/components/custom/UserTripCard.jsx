@@ -25,10 +25,10 @@ function UserTripCard({ trip }) {
     }
     return (
         <a href={`/view-trip/${trip?.docId}`} target='_blank'>
-            <div className='flex flex-col w-[24vw] h-[55vh] rounded-lg bg-[rgb(63,63,63)] ' >
-                <img src={placeUrl} className='object-cover w-[24vw] h-[240px]  rounded-t-lg' alt="" />
+            <div className='flex flex-col w-[90vw] min-h-[50vh] sm:w-[45vw] sm:min-h-[60vh] [@media(min-width:1400px)]:w-[24vw] [@media(min-width:1400px)]:min-h-[55vh] rounded-lg bg-[rgb(63,63,63)] ' >
+                <img src={placeUrl} className='object-cover w-[90vw] h-[35vh] sm:w-[45vw] sm:h-[35vh] [@media(min-width:1400px)]:w-[24vw] [@media(min-width:1400px)]:h-[35vh] rounded-t-lg' alt="" />
                 <div className='flex flex-col flex-grow justify-between items-start p-4 gap-3'>
-                    <h2 className='font-bold text-2xl text-white'>{trip?.tripData?.tripName}</h2>
+                    <h2 className='font-bold text-xl md:text-2xl text-white'>{trip?.tripData?.tripName}</h2>
                     <p className='text-slate-300'>{"For Duration of " + trip?.tripData?.duration}</p>
                     <div className="flex-grow"></div>
                     <Button className='w-full bg-blue-500'>More Info</Button>

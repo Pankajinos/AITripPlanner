@@ -30,7 +30,7 @@ function ViewTrip() {
 
     
     return (
-        <div className='md:p-8 flex flex-col m-4 md:m-[10vh]  md:mt-2'>
+        <div className='flex flex-col m-4 md:m-[10vh]  md:mt-2'>
             <TripHeader trip={trip} />
             {/* hotels */}
             <Hotels trip={trip} />
