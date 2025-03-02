@@ -7,9 +7,9 @@ const PHOTO_URL_BASE = `https://maps.googleapis.com/maps/api/place/details/json?
 function Hero() {
   return (
     <div
-      className="flex items-end h-[92vh] justify-center bg-[url('/bg.jpg')] bg-cover bg-no-repeat"
+      className="flex items-end h-[92vh]  justify-center bg-[url('/bg.jpg')] bg-cover bg-no-repeat"
     >
-      <div className="flex flex-col items-center justify-center z-10 bg-black bg-opacity-80 p-6 md:w-[45vw] md:h-[30vh] w-[95vw] rounded-2xl shadow-lg mb-24 ">
+      <div className="flex flex-col items-center justify-center z-10 bg-black bg-opacity-80 p-6 [@media(min-width:850px)]:w-[45vw] [@media(min-width:850px)]:h-[30vh] w-[95vw] rounded-2xl shadow-lg mb-24 ">
         <h1 className="font-bold text-2xl font-sans">
           "Your Dream Trip, Instantly Planned with{" "}
           <span className="text-bold text-red-600">AI</span>!" 🚀
