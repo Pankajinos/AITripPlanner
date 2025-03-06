@@ -12,16 +12,13 @@ function HotelCard({ hotel }) {
               languageCode: 'en'
           };
           const result = await GetPlaceDetails(data).then((resp) => {
-              console.log(resp.data.places[0].photos);
               const PHOTO_URL = PHOTO_URL_BASE.replace('{NAME}',resp.data.places[0].photos[5].name);
-              console.log(`For ${hotel.hotelName} url is :`);
-              console.log(PHOTO_URL);
               if(PHOTO_URL) setHotelUrl(PHOTO_URL);
           });
       }
   return (
     <Link to={`https://www.google.com/maps/search/?api=1&query=${hotel.hotelName} ${hotel.hotelAddress}`} target='_blank'>
-    <div className='flex flex-col min-h-[50vh]  md:h-[60vh] flex-grow bg-[rgb(59,63,60)] p-2 rounded-lg'>
+    <div className='flex flex-col min-h-[50vh] max-h-[500px] md:h-[60vh] flex-grow bg-[rgb(59,63,60)] p-2 rounded-lg'>
     <img src={hotelUrl} className='rounded-xl object-cover h-[35vh]  md:h-[40vh]'  alt="" />
     <h1 className='font-bold text-xl '>{hotel?.hotelName}</h1>
         <p className='text-sm'>{hotel?.description}</p>

@@ -17,7 +17,7 @@ function Header() {
   const [openDialog, setOpenDialog] = useState(false)
   const user = JSON.parse(localStorage.getItem('user'));
   useEffect(() => {
-    console.log(user?.picture)
+    // console.log(user?.picture)
   }, [])
   const login = useGoogleLogin({
     onSuccess: (codeResp) => getUserProfile(codeResp),
@@ -30,7 +30,7 @@ function Header() {
         Accept: "application/json"
       }
     }).then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       localStorage.setItem("user", JSON.stringify(res.data))
       localStorage.setItem("isDark", true)
       setOpenDialog(false);

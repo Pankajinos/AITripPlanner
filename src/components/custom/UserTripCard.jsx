@@ -16,10 +16,7 @@ function UserTripCard({ trip }) {
             languageCode: 'en'
         };
         const result = await GetPlaceDetails(data).then((resp) => {
-            console.log(trip?.tripData?.location);
             const PHOTO_URL = PHOTO_URL_BASE.replace('{NAME}', resp.data.places[0].photos[2].name);
-            console.log("Url of "+trip?.tripData?.location+"is ")
-            console.log(PHOTO_URL)
             setPlaceUrl(PHOTO_URL);
         });
     }

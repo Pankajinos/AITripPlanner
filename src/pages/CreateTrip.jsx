@@ -46,7 +46,6 @@ export function CreateTrip() {
         Accept: "application/json"
       }
     }).then((res) => {
-      console.log(res.data);
       localStorage.setItem("user", JSON.stringify(res.data))
       setOpenDialog(false);
       generateTripHandler();
@@ -78,8 +77,8 @@ export function CreateTrip() {
         .replace('{traveller}', formData.traveller)
 
     const result = await chatSession.sendMessage(AT_PROMPT_FINAL);
-    console.log(AT_PROMPT_FINAL);
-    console.log(result?.response?.text())
+    // console.log(AT_PROMPT_FINAL);
+    // console.log(result?.response?.text())
     saveTrip(result?.response?.text());
     setLoading(false);
   }

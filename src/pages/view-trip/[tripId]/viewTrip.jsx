@@ -19,7 +19,6 @@ function ViewTrip() {
         const docRef = doc(db, "AiTrips", tripId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
             setTrip(docSnap.data());
         }
         else {
