@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input"
-import { Budget, SelectTravelList, AI_PROMPT } from "@/constants/options"
+import { Budget, SelectTravelList, AI_PROMPT, Preferences } from "@/constants/options"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { ToastContainerCustom, ToastAlert } from "@/components/custom/toaster"
@@ -28,6 +28,10 @@ export function CreateTrip() {
   const [formData, setForm] = useState([]);
   const [openDialog, setOpenDialog] = useState(false)
   const [loading, setLoading] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
+  const togglePublic = () => {
+    setIsPublic(!isPublic);
+  };
   const navigate = useNavigate();
   const inputChangeHandler = (name, value) => {
     setForm({
@@ -61,7 +65,7 @@ export function CreateTrip() {
     }
 
     if (formData.noOfDays > 8) {
-      ToastAlert("No of Days must be less than 4");
+      ToastAlert("No of Days must be less than 8");
       return;
     }
     if (!formData.noOfDays || !formData.location || !formData.traveller || !formData.budget) {
@@ -80,6 +84,9 @@ export function CreateTrip() {
     // console.log(AT_PROMPT_FINAL);
     // console.log(result?.response?.text())
     saveTrip(result?.response?.text());
+    if (isPublic) {
+      savePublicTrip(result?.response?.text());
+    }
     setLoading(false);
   }
   const saveTrip = async (tripData) => {
@@ -98,6 +105,31 @@ export function CreateTrip() {
       console.error("Error saving trip:", error);
     } finally {
       setLoading(false);
+    }
+  };
+  const savePublicTrip = async (tripData) => {
+
+    const parsedTripData = JSON.parse(tripData);
+    const user = JSON.parse(localStorage.getItem("user"));
+    const basicTripContent = {
+      tripName: parsedTripData?.tripName,
+      budget: parsedTripData?.budget,
+      duration: parsedTripData?.duration,
+      noOfDays: formData.noOfDays,
+      noOfPeople: formData.noOfPeople,
+      startDate: formData.startDate,
+      location: formData.location,
+      name: user.name,
+    };
+    try {
+      const docId = Date.now().toString();
+      await setDoc(doc(db, "PublicTrips", docId), {
+        tripData: basicTripContent,
+        userEmail: user?.email,
+        docId: docId,
+      });
+    } catch (error) {
+      console.error("Error saving trip:", error);
     }
   };
   return <>
@@ -157,6 +189,25 @@ export function CreateTrip() {
         <h1 className="font-sans border-white">Enter number of Days</h1>
         <Input type="number" placeholder={"Ex.3"} onChange={(e) => { inputChangeHandler('noOfDays', e.target.value) }} />
       </div>
+      <div className="w-[70vw] flex items-start md:items-center flex-col  md:flex-row gap-4">
+        <div>
+          <h1 className="font-sans border-white">Enter number of People</h1>
+          <Input
+            type="number"
+            placeholder="Ex. 3"
+            onChange={(e) => inputChangeHandler('noOfPeople', e.target.value)}
+          />
+        </div>
+
+        <div>
+          <h1 className="font-sans border-white">Start Date</h1>
+          <Input
+            type="date"
+            onChange={(e) => inputChangeHandler('startDate', e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="w-[70vw]">
         <h1 className="my-3 text-xl font-medium">What's your Budget?</h1>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -177,14 +228,32 @@ export function CreateTrip() {
               <h2>{item.desc}</h2>
             </div>)
           })}
-          <div className=" flex justify-end w-[70vw]">
-            <Button
-              className='mt-10'
-              disabled={loading}
-              onClick={generateTripHandler}
-            >{loading ? <ImSpinner className="animate-spin" /> : 'Generate Trip'}
-            </Button>
+        </div>
+        <h1 className="my-3 text-xl font-medium">What are your preferences?</h1>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {Preferences.map((item, index) => {
+            return (<div key={index} onClick={() => { inputChangeHandler('preference', item.title) }} className={`p-2 border rounded-lg  bg-gray-900 border-black ${formData.preference == item.title && `border-yellow-500 border-[3px]`}`}>
+              <h2 className="font-bold">{item.title}</h2>
+            </div>)
+          })}
+        </div>
+        <h1 className="my-3 text-xl font-medium pt-4">Want to share your trip to find companions?</h1>
+        <div className="flex gap-4">
+          <div onClick={() => { setIsPublic(true)}} className={`p-2 border rounded-lg  bg-gray-900 border-black ${isPublic && `border-yellow-500 border-[3px]`}`}>
+            <h2 className="text-l font-medium">{"Yes"}</h2>
           </div>
+          <div onClick={() => { setIsPublic(false)}} className={`p-2 border rounded-lg  bg-gray-900 border-black ${!isPublic && `border-yellow-500 border-[3px]`}`}>
+            <h2 className="text-l font-medium">{"No"}</h2>
+          </div>
+        </div>
+        <p className="text-[rgb(122,129,37)]">By selecting 'Yes', your trip details will be shared publicly, allowing others to discover and join your journey.</p>
+        <div className=" flex justify-end w-[70vw]">
+          <Button
+            className='mt-10'
+            disabled={loading}
+            onClick={generateTripHandler}
+          >{loading ? <ImSpinner className="animate-spin" /> : 'Generate Trip'}
+          </Button>
         </div>
         <Dialog open={openDialog} onOpenChange={setOpenDialog} >
           <DialogContent className="p-6 bg-[rgb(40,43,40)] rounded-2xl shadow-lg max-w-sm">

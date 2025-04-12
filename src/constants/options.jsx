@@ -49,6 +49,33 @@ export const Budget = [
     icon: "💎",
   },
 ];
+export const Preferences = [
+  { 
+    id: 1,
+    title: "Religious and spiritual",
+    
+  },
+  { 
+    id: 2,
+    title: "Adventures and activities",
+  },
+  { 
+    id: 3,
+    title: "Historical and cultural"
+  },
+  { 
+    id: 4,
+    title: "Nature and scenic beauty"
+  },
+  { 
+    id: 5,
+    title: "Urban and modern attractions"
+  },
+  { 
+    id: 6,
+    title: "None"
+  },
+];
 
 export const AI_PROMPT = `Example schema trip, const trip = {
   tripName: "Luxry Trip To XYZ",
