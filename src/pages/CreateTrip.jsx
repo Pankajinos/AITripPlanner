@@ -29,6 +29,7 @@ export function CreateTrip() {
   const [openDialog, setOpenDialog] = useState(false)
   const [loading, setLoading] = useState(false);
   const [isPublic, setIsPublic] = useState(false);
+  const [manualLocation, setManualLocation] = useState(!import.meta.env.VITE_GOOGLE_MAP_API);
   const togglePublic = () => {
     setIsPublic(!isPublic);
   };
@@ -221,50 +222,68 @@ export function CreateTrip() {
         <p>Just provide some basic information and our trip will automatically genrated based on your preference</p>
       </div>
       <div className="w-[70vw]">
-        <h1 className="font-sans">Choose Destination for your Trip</h1>
-        <GooglePlacesAutocomplete
-          apiKey={import.meta.env.VITE_GOOGLE_MAP_API}
-          selectProps={{
-            styles: {
-              control: (base) => ({
-                ...base,
-                backgroundColor: "rgb(40, 43, 40,0.2)", // Dark background
-                color: "white",
-                borderRadius: "8px",
-                border: "1px solid white",
-              }),
-              input: (base) => ({
-                ...base,
-                color: "white",
-              }),
-              singleValue: (base) => ({
-                ...base,
-                color: "white",
-              }),
-              menu: (base) => ({
-                ...base,
-                backgroundColor: "rgb(30, 30, 30)", // Dark dropdown
-                borderRadius: "8px",
-                padding: "5px",
-              }),
-              option: (base, { isFocused, isSelected }) => ({
-                ...base,
-                backgroundColor: isSelected
-                  ? "rgb(70, 70, 70)" // Darker for selected
-                  : isFocused
-                    ? "rgb(90, 90, 90)" // Lighter for hover
-                    : "rgb(30, 30, 30)", // Default dark
-                color: "white",
-                padding: "10px",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }),
-            },
-            onChange: (e) => inputChangeHandler("location", e.label),
-          }}
-        />
-
-
+        <div className="flex justify-between items-center mb-1">
+          <h1 className="font-sans">Choose Destination for your Trip</h1>
+          <button
+            type="button"
+            onClick={() => setManualLocation(!manualLocation)}
+            className="text-xs text-blue-400 hover:text-blue-300 underline"
+          >
+            {manualLocation ? "Use Places Autocomplete" : "Enter manually if Places API gives error"}
+          </button>
+        </div>
+        {manualLocation ? (
+          <Input
+            type="text"
+            placeholder="Ex. Paris, France or Tokyo, Japan"
+            defaultValue={formData?.location || ""}
+            onChange={(e) => inputChangeHandler("location", e.target.value)}
+            className="border border-white bg-[rgb(40,43,40,0.2)] text-white"
+          />
+        ) : (
+          <GooglePlacesAutocomplete
+            apiKey={import.meta.env.VITE_GOOGLE_MAP_API}
+            selectProps={{
+              styles: {
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: "rgb(40, 43, 40,0.2)", // Dark background
+                  color: "white",
+                  borderRadius: "8px",
+                  border: "1px solid white",
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: "white",
+                }),
+                singleValue: (base) => ({
+                  ...base,
+                  color: "white",
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: "rgb(30, 30, 30)", // Dark dropdown
+                  borderRadius: "8px",
+                  padding: "5px",
+                }),
+                option: (base, { isFocused, isSelected }) => ({
+                  ...base,
+                  backgroundColor: isSelected
+                    ? "rgb(70, 70, 70)" // Darker for selected
+                    : isFocused
+                      ? "rgb(90, 90, 90)" // Lighter for hover
+                      : "rgb(30, 30, 30)", // Default dark
+                  color: "white",
+                  padding: "10px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }),
+              },
+              placeholder: "Search destination...",
+              onChange: (e) => inputChangeHandler("location", e?.label || e?.value?.description || ""),
+            }}
+          />
+        )}
       </div>
       <div className="w-[70vw]">
         <h1 className="font-sans border-white">Enter number of Days</h1>

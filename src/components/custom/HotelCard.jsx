@@ -7,14 +7,21 @@ function HotelCard({ hotel }) {
           hotel && getHotelPhoto();
       }, [hotel])
       const getHotelPhoto = async () => {
-          const data = {
-                textQuery: hotel?.hotelName,
-              languageCode: 'en'
-          };
-          const result = await GetPlaceDetails(data).then((resp) => {
-              const PHOTO_URL = PHOTO_URL_BASE.replace('{NAME}',resp.data.places[0].photos[5].name);
-              if(PHOTO_URL) setHotelUrl(PHOTO_URL);
-          });
+          try {
+              const data = {
+                  textQuery: `${hotel?.hotelName} ${hotel?.hotelAddress || ""}`,
+                  languageCode: 'en'
+              };
+              const resp = await GetPlaceDetails(data);
+              const photos = resp?.data?.places?.[0]?.photos;
+              const photoName = photos?.[0]?.name;
+              if (photoName) {
+                  const PHOTO_URL = PHOTO_URL_BASE.replace('{NAME}', photoName);
+                  setHotelUrl(PHOTO_URL);
+              }
+          } catch (err) {
+              // Keeps the default fallback /illustration.svg without crashing
+          }
       }
   return (
     <Link to={`https://www.google.com/maps/search/?api=1&query=${hotel.hotelName} ${hotel.hotelAddress}`} target='_blank'>

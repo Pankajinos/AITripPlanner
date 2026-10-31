@@ -11,14 +11,21 @@ function UserTripCard({ trip }) {
         trip && getPlacePhoto();
     }, [trip])
     const getPlacePhoto = async () => {
-        const data = {
-            textQuery: trip?.tripData?.location,
-            languageCode: 'en'
-        };
-        const result = await GetPlaceDetails(data).then((resp) => {
-            const PHOTO_URL = PHOTO_URL_BASE.replace('{NAME}', resp.data.places[0].photos[2].name);
-            setPlaceUrl(PHOTO_URL);
-        });
+        try {
+            const data = {
+                textQuery: trip?.tripData?.location,
+                languageCode: 'en'
+            };
+            const resp = await GetPlaceDetails(data);
+            const photos = resp?.data?.places?.[0]?.photos;
+            const photoName = photos?.[0]?.name;
+            if (photoName) {
+                const PHOTO_URL = PHOTO_URL_BASE.replace('{NAME}', photoName);
+                setPlaceUrl(PHOTO_URL);
+            }
+        } catch (err) {
+            // Keeps the default fallback /illustration.svg without crashing
+        }
     }
     return (
         <a href={`/view-trip/${trip?.docId}`} target='_blank'>
