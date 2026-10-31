@@ -71,14 +71,16 @@ function Header() {
                 <img src="/logo.svg" alt="logo" className="mx-auto" />
               </a>
             </DialogTitle>
-            <DialogDescription className="w-full text-center">
-              <h2 className="font-semibold text-white text-base my-4">Sign in with Google</h2>
-              <Button
-                onClick={login}
-                className="w-full py-3 flex gap-3 items-center justify-center border border-gray-300 rounded-lg hover:bg-slate-800 transition"
-              >
-                <FcGoogle className="text-xl" /> Sign up
-              </Button>
+            <DialogDescription asChild>
+              <div className="w-full text-center">
+                <span className="block font-semibold text-white text-base my-4">Sign in with Google</span>
+                <Button
+                  onClick={login}
+                  className="w-full py-3 flex gap-3 items-center justify-center border border-gray-300 rounded-lg hover:bg-slate-800 transition"
+                >
+                  <FcGoogle className="text-xl" /> Sign up
+                </Button>
+              </div>
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
